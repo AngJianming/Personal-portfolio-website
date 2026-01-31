@@ -4,6 +4,7 @@ import { useState, useEffect } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { Menu, X, Home, User, Briefcase, FolderOpen, Mail, FileText, ShoppingBag, Settings } from "lucide-react"
 import { cn } from "@/lib/utils"
+import { ThemeToggle } from "@/components/theme-toggle"
 
 const navItems = [
   { name: "Home", href: "#", icon: Home },
@@ -82,12 +83,15 @@ export function Navigation() {
               transition={{ type: "spring", damping: 25, stiffness: 200 }}
               className="fixed left-0 top-0 h-full w-72 bg-card/95 backdrop-blur-xl border-r border-border p-8 pt-24"
             >
-              <div className="mb-8">
-                <div className="w-12 h-12 rounded-full bg-gradient-to-br from-primary/30 to-primary/10 border border-primary/30 flex items-center justify-center mb-4">
-                  <span className="text-lg font-bold text-primary">AJ</span>
+              <div className="mb-8 flex items-start justify-between">
+                <div>
+                  <div className="w-12 h-12 rounded-full bg-gradient-to-br from-primary/30 to-primary/10 border border-primary/30 flex items-center justify-center mb-4">
+                    <span className="text-lg font-bold text-primary">AJ</span>
+                  </div>
+                  <h2 className="text-xl font-bold text-foreground">Ang Jianming</h2>
+                  <p className="text-sm text-muted-foreground">AI Engineer</p>
                 </div>
-                <h2 className="text-xl font-bold text-foreground">Ang Jianming</h2>
-                <p className="text-sm text-muted-foreground">AI Engineer</p>
+                <ThemeToggle />
               </div>
 
               <ul className="space-y-2">
@@ -179,6 +183,7 @@ export function Navigation() {
               <p className="text-xs text-muted-foreground">AI Engineer</p>
             </div>
           </div>
+          <ThemeToggle />
         </div>
       </header>
     </>

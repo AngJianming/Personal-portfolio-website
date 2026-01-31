@@ -1,104 +1,33 @@
 "use client"
 
-import { useEffect, useRef } from "react"
+import { Suspense } from "react"
+import dynamic from "next/dynamic"
 import { motion } from "framer-motion"
 import { ArrowDown, Github, Linkedin, Mail, FileText } from "lucide-react"
 import { Button } from "@/components/ui/button"
 
+// Dynamically import 3D scene to avoid SSR issues
+const NeuralNetwork3D = dynamic(
+  () => import("./neural-network-3d").then((mod) => mod.NeuralNetwork3D),
+  { ssr: false }
+)
+
+function Scene3DFallback() {
+  return (
+    <div className="absolute inset-0 z-0 bg-gradient-to-br from-background via-background to-primary/5" />
+  )
+}
+
 export function HeroSection() {
-  const canvasRef = useRef<HTMLCanvasElement>(null)
-
-  useEffect(() => {
-    const canvas = canvasRef.current
-    if (!canvas) return
-
-    const ctx = canvas.getContext("2d")
-    if (!ctx) return
-
-    let animationFrameId: number
-    const particles: Array<{
-      x: number
-      y: number
-      radius: number
-      vx: number
-      vy: number
-      alpha: number
-    }> = []
-
-    const resize = () => {
-      canvas.width = window.innerWidth
-      canvas.height = window.innerHeight
-    }
-
-    const createParticles = () => {
-      const particleCount = Math.floor((canvas.width * canvas.height) / 15000)
-      for (let i = 0; i < particleCount; i++) {
-        particles.push({
-          x: Math.random() * canvas.width,
-          y: Math.random() * canvas.height,
-          radius: Math.random() * 1.5 + 0.5,
-          vx: (Math.random() - 0.5) * 0.3,
-          vy: (Math.random() - 0.5) * 0.3,
-          alpha: Math.random() * 0.5 + 0.1,
-        })
-      }
-    }
-
-    const animate = () => {
-      ctx.clearRect(0, 0, canvas.width, canvas.height)
-
-      particles.forEach((particle) => {
-        particle.x += particle.vx
-        particle.y += particle.vy
-
-        if (particle.x < 0 || particle.x > canvas.width) particle.vx *= -1
-        if (particle.y < 0 || particle.y > canvas.height) particle.vy *= -1
-
-        ctx.beginPath()
-        ctx.arc(particle.x, particle.y, particle.radius, 0, Math.PI * 2)
-        ctx.fillStyle = `rgba(94, 234, 212, ${particle.alpha})`
-        ctx.fill()
-      })
-
-      // Draw connections
-      particles.forEach((p1, i) => {
-        particles.slice(i + 1).forEach((p2) => {
-          const dx = p1.x - p2.x
-          const dy = p1.y - p2.y
-          const distance = Math.sqrt(dx * dx + dy * dy)
-
-          if (distance < 100) {
-            ctx.beginPath()
-            ctx.moveTo(p1.x, p1.y)
-            ctx.lineTo(p2.x, p2.y)
-            ctx.strokeStyle = `rgba(94, 234, 212, ${0.1 * (1 - distance / 100)})`
-            ctx.stroke()
-          }
-        })
-      })
-
-      animationFrameId = requestAnimationFrame(animate)
-    }
-
-    resize()
-    createParticles()
-    animate()
-
-    window.addEventListener("resize", resize)
-
-    return () => {
-      cancelAnimationFrame(animationFrameId)
-      window.removeEventListener("resize", resize)
-    }
-  }, [])
-
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
-      <canvas
-        ref={canvasRef}
-        className="absolute inset-0 pointer-events-none"
-        aria-hidden="true"
-      />
+      {/* 3D Neural Network Background */}
+      <Suspense fallback={<Scene3DFallback />}>
+        <NeuralNetwork3D />
+      </Suspense>
+      
+      {/* Gradient Overlay */}
+      <div className="absolute inset-0 z-[1] bg-gradient-to-b from-background/80 via-background/50 to-background pointer-events-none" />
 
       <div className="relative z-10 px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto text-center">
         <motion.div
